@@ -21,6 +21,8 @@ manifest:
   remotes:
     - name: upstream
       url-base: https://github.com/zephyrproject-rtos
+    - name: trustngo
+      url-base: https://github.com/trustngotech
 
   #
   # Please add items below based on alphabetical order
@@ -181,8 +183,9 @@ manifest:
       path: modules/crypto/mbedtls
       groups:
         - crypto
-    - name: mcuboot
-      revision: 13f63976bca672ee018f9d55f1e31f02f4135b64
+    - name: zephyr-mcuboot
+      remote: trustngo
+      revision: formation
       path: bootloader/mcuboot
     - name: mipi-sys-t
       path: modules/debug/mipi-sys-t
