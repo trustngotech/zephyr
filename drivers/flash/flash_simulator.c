@@ -51,7 +51,7 @@
 #error "Erase unit must be a multiple of program unit"
 #endif
 
-#define MOCK_FLASH(addr) (mock_flash + (addr) - FLASH_SIMULATOR_BASE_OFFSET)
+#define MOCK_FLASH(addr) (mock_flash + (addr))
 
 /* maximum number of pages that can be tracked by the stats module */
 #define STATS_PAGE_COUNT_THRESHOLD 256
@@ -149,7 +149,7 @@ static int flash_fd = -1;
 static const char *flash_file_path;
 static const char default_flash_file_path[] = "flash.bin";
 #else
-static uint8_t mock_flash[FLASH_SIMULATOR_FLASH_SIZE];
+static uint8_t *mock_flash = (uint8_t*) FLASH_SIMULATOR_BASE_OFFSET;
 #endif /* CONFIG_ARCH_POSIX */
 
 static const struct flash_driver_api flash_sim_api;
@@ -163,9 +163,7 @@ static int flash_range_is_valid(const struct device *dev, off_t offset,
 				size_t len)
 {
 	ARG_UNUSED(dev);
-	if ((offset + len > FLASH_SIMULATOR_FLASH_SIZE +
-			    FLASH_SIMULATOR_BASE_OFFSET) ||
-	    (offset < FLASH_SIMULATOR_BASE_OFFSET)) {
+	if ((offset + len > FLASH_SIMULATOR_FLASH_SIZE)) {
 		return 0;
 	}
 
@@ -421,8 +419,7 @@ static int flash_mock_init(const struct device *dev)
 
 static int flash_mock_init(const struct device *dev)
 {
-	memset(mock_flash, FLASH_SIMULATOR_ERASE_VALUE, ARRAY_SIZE(mock_flash));
-	return 0;
+		return 0;
 }
 
 #endif /* CONFIG_ARCH_POSIX */
