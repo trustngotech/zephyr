@@ -185,7 +185,7 @@ manifest:
         - crypto
     - name: zephyr-mcuboot
       remote: trustngo
-      revision: formation
+      revision: 3b089a8a9b9a5bd6b82d7f0880b4e916f3a25226
       path: bootloader/mcuboot
     - name: mipi-sys-t
       path: modules/debug/mipi-sys-t
