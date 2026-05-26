@@ -48,7 +48,7 @@
 #error "Erase unit must be a multiple of program unit"
 #endif
 
-#define MOCK_FLASH(addr) (mock_flash + (addr) - FLASH_SIMULATOR_BASE_OFFSET)
+#define MOCK_FLASH(addr) (mock_flash + (addr))
 
 /* maximum number of pages that can be tracked by the stats module */
 #define STATS_PAGE_COUNT_THRESHOLD 256
@@ -148,14 +148,7 @@ static bool flash_erase_at_start;
 static bool flash_rm_at_exit;
 static bool flash_in_ram;
 #else
-#if DT_NODE_HAS_PROP(DT_PARENT(SOC_NV_FLASH_NODE), memory_region)
-#define FLASH_SIMULATOR_MREGION \
-	LINKER_DT_NODE_REGION_NAME( \
-	DT_PHANDLE(DT_PARENT(SOC_NV_FLASH_NODE), memory_region))
-static uint8_t mock_flash[FLASH_SIMULATOR_FLASH_SIZE] Z_GENERIC_SECTION(FLASH_SIMULATOR_MREGION);
-#else
-static uint8_t mock_flash[FLASH_SIMULATOR_FLASH_SIZE];
-#endif
+static uint8_t *mock_flash = (uint8_t*) FLASH_SIMULATOR_BASE_OFFSET;
 #endif /* CONFIG_ARCH_POSIX */
 
 static const struct flash_driver_api flash_sim_api;
@@ -174,9 +167,7 @@ static int flash_range_is_valid(const struct device *dev, off_t offset,
 				size_t len)
 {
 	ARG_UNUSED(dev);
-	if ((offset + len > FLASH_SIMULATOR_FLASH_SIZE +
-			    FLASH_SIMULATOR_BASE_OFFSET) ||
-	    (offset < FLASH_SIMULATOR_BASE_OFFSET)) {
+	if ((offset + len > FLASH_SIMULATOR_FLASH_SIZE)) {
 		return 0;
 	}
 
@@ -407,20 +398,11 @@ static int flash_mock_init(const struct device *dev)
 }
 
 #else
-#if DT_NODE_HAS_PROP(DT_PARENT(SOC_NV_FLASH_NODE), memory_region)
 static int flash_mock_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
 	return 0;
 }
-#else
-static int flash_mock_init(const struct device *dev)
-{
-	ARG_UNUSED(dev);
-	memset(mock_flash, FLASH_SIMULATOR_ERASE_VALUE, ARRAY_SIZE(mock_flash));
-	return 0;
-}
-#endif /* DT_NODE_HAS_PROP(DT_PARENT(SOC_NV_FLASH_NODE), memory_region) */
 #endif /* CONFIG_ARCH_POSIX */
 
 static int flash_init(const struct device *dev)

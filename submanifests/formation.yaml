@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: mcuboot
+      url: https://github.com/trustngotech/mcuboot/
+      revision: b9a0635fb2786d658079b5c0303a7ca5e5b161ac
+      path: bootloader/mcuboot
